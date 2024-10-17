@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import Navbar from './navbar/Navbar';
+import Navbar from "../components/Navbar"
 const page = () => {
   return (
-    <main>
+    <>
       
-    </main>
+    </>
   )
 }
 
