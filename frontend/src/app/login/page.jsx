@@ -6,12 +6,12 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { useState } from "react";
 
-enum MODE {
-  LOGIN = "LOGIN",
-  REGISTER = "REGISTER",
-  RESET_PASSWORD = "RESET_PASSWORD",
-  EMAIL_VERIFICATION = "EMAIL_VERIFICATION",
-}
+const MODE = {
+  LOGIN: "LOGIN",
+  REGISTER: "REGISTER",
+  RESET_PASSWORD: "RESET_PASSWORD",
+  EMAIL_VERIFICATION: "EMAIL_VERIFICATION",
+};
 
 const LoginPage = () => {
   const wixClient = useWixClient();
@@ -24,7 +24,6 @@ const LoginPage = () => {
   }
 
   const [mode, setMode] = useState(MODE.LOGIN);
-
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,7 +50,7 @@ const LoginPage = () => {
       ? "Reset"
       : "Verify";
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
@@ -93,7 +92,7 @@ const LoginPage = () => {
         case LoginState.SUCCESS:
           setMessage("Successful! You are being redirected.");
           const tokens = await wixClient.auth.getMemberTokensForDirectLogin(
-            response.data.sessionToken!
+            response.data.sessionToken
           );
 
           Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), {
@@ -115,10 +114,13 @@ const LoginPage = () => {
           } else {
             setError("Something went wrong!");
           }
+          break;
         case LoginState.EMAIL_VERIFICATION_REQUIRED:
           setMode(MODE.EMAIL_VERIFICATION);
+          break;
         case LoginState.OWNER_APPROVAL_REQUIRED:
           setMessage("Your account is pending approval");
+          break;
         default:
           break;
       }
@@ -209,7 +211,7 @@ const LoginPage = () => {
             className="text-sm underline cursor-pointer"
             onClick={() => setMode(MODE.LOGIN)}
           >
-            Have and account?
+            Have an account?
           </div>
         )}
         {mode === MODE.RESET_PASSWORD && (
