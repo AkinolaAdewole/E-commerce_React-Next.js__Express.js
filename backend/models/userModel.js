@@ -4,8 +4,8 @@ import bcrypt from 'bcryptjs'
 const userSchema= mongoose.Schema({
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
-    email: { type: String, required: true },
-    username: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    phonenumber: { type: String, required: true, unique: true },
     password:{ type: String, required: true}
 });
 
@@ -27,5 +27,5 @@ userSchema.pre('save', async function (next) {
     return await bcrypt.compare(enteredPassword, this.password);
   };
 
-  const userModel = mongoose.model("user_assessment", userSchema);
+  const userModel = mongoose.model("user-assessments", userSchema);
   export default userModel;

@@ -222,11 +222,12 @@ const LoginPage = () => {
       )}
       
       <button
-        className="bg-lama text-white p-2 rounded-md disabled:bg-pink-200 disabled:cursor-not-allowed"
+        className="bg-blue-500 text-white p-2 rounded-md disabled:bg-blue-200 disabled:cursor-not-allowed"
         disabled={isLoading}
       >
         {isLoading ? "Loading..." : buttonTitle}
       </button>
+
       
       {error && <div className="text-red-600">{error}</div>}
       
