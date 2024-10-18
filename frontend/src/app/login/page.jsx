@@ -52,87 +52,100 @@ const LoginPage = () => {
       ? "Reset"
       : "Verify";
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
-
-    try {
-      let response;
-
-      switch (mode) {
-        case MODE.LOGIN:
-          response = await wixClient.auth.login({
-            email,
-            password,
-          });
-          break;
-        case MODE.REGISTER:
-          response = await wixClient.auth.register({
-            email,
-            password,
-            profile: { nickname: username },
-          });
-          break;
-        case MODE.RESET_PASSWORD:
-          response = await wixClient.auth.sendPasswordResetEmail(
-            email,
-            window.location.href
-          );
-          setMessage("Password reset email sent. Please check your e-mail.");
-          break;
-        case MODE.EMAIL_VERIFICATION:
-          response = await wixClient.auth.processVerification({
-            verificationCode: emailCode,
-          });
-          break;
-        default:
-          break;
-      }
-
-      switch (response?.loginState) {
-        case LoginState.SUCCESS:
-          setMessage("Successful! You are being redirected.");
-          const tokens = await wixClient.auth.getMemberTokensForDirectLogin(
-            response.data.sessionToken
-          );
-
-          Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), {
-            expires: 2,
-          });
-          wixClient.auth.setTokens(tokens);
-          router.push("/");
-          break;
-        case LoginState.FAILURE:
-          if (
-            response.errorCode === "invalidEmail" ||
-            response.errorCode === "invalidPassword"
-          ) {
-            setError("Invalid email or password!");
-          } else if (response.errorCode === "emailAlreadyExists") {
-            setError("Email already exists!");
-          } else if (response.errorCode === "resetPassword") {
-            setError("You need to reset your password!");
-          } else {
-            setError("Something went wrong!");
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError("");
+      
+        try {
+          let response;
+      
+          switch (mode) {
+            case MODE.LOGIN:
+              // POST request for signing in
+              response = await fetch("http://localhost:4200/user/signin", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  email,
+                  password,
+                }),
+              });
+              break;
+            case MODE.REGISTER:
+              // POST request for signing up
+              response = await fetch("http://localhost:4200/user/signup", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  email,
+                  password,
+                  profile: { nickname: username, firstname, lastname, phonenumber }, // Include additional fields as needed
+                }),
+              });
+              break;
+            case MODE.RESET_PASSWORD:
+              response = await wixClient.auth.sendPasswordResetEmail(
+                email,
+                window.location.href
+              );
+              setMessage("Password reset email sent. Please check your e-mail.");
+              break;
+            case MODE.EMAIL_VERIFICATION:
+              response = await wixClient.auth.processVerification({
+                verificationCode: emailCode,
+              });
+              break;
+            default:
+              break;
           }
-          break;
-        case LoginState.EMAIL_VERIFICATION_REQUIRED:
-          setMode(MODE.EMAIL_VERIFICATION);
-          break;
-        case LoginState.OWNER_APPROVAL_REQUIRED:
-          setMessage("Your account is pending approval");
-          break;
-        default:
-          break;
-      }
-    } catch (err) {
-      console.log(err);
-      setError("Something went wrong!");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      
+          const data = await response.json(); // Parse JSON response
+          if (!response.ok) {
+            throw new Error(data.message || "An error occurred");
+          }
+      
+          // Handle response for login and register
+          switch (mode) {
+            case MODE.LOGIN:
+              if (data.success) { // Assuming the API responds with a success flag
+                setMessage("Successful! You are being redirected.");
+                const tokens = data.tokens; // Update with actual token structure
+                
+                Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), {
+                  expires: 2,
+                });
+                router.push("/"); // Redirect on success
+              } else {
+                setError(data.message || "Something went wrong!");
+              }
+              break;
+      
+            case MODE.REGISTER:
+              if (data.success) { // Assuming the API responds with a success flag
+                setMessage("Registration successful! You can now log in.");
+                setMode(MODE.LOGIN); // Optionally switch to login mode
+              } else {
+                setError(data.message || "Registration failed!");
+              }
+              break;
+      
+            // Handle other modes as needed
+            default:
+              break;
+          }
+        } catch (err) {
+          console.error(err);
+          setError("Something went wrong!");
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      
 
   return (
     <div className="h-[calc(100vh-80px)] px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 flex items-center justify-center">
