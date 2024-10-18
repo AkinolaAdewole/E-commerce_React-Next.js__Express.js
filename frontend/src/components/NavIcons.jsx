@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CartModal from "./CartModal";
+import { useWixClient } from "../hooks/useWixClient";
 import Cookies from "js-cookie";
-import { useWixClient } from "@/hooks/useWixClient";
-import { useCartStore } from "@/hooks/useCartStore";
+import { useCartStore } from "../hooks/useCartStore";
 
 const NavIcons = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -15,6 +15,8 @@ const NavIcons = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+  const pathName = usePathname();
+
   const wixClient = useWixClient();
   const isLoggedIn = wixClient.auth.loggedIn();
 
@@ -45,7 +47,7 @@ const NavIcons = () => {
     <div className="flex items-center gap-4 xl:gap-6 relative">
       <Image
         src="/profile.png"
-        alt="Profile"
+        alt=""
         width={22}
         height={22}
         className="cursor-pointer"
@@ -61,7 +63,7 @@ const NavIcons = () => {
       )}
       <Image
         src="/notification.png"
-        alt="Notification"
+        alt=""
         width={22}
         height={22}
         className="cursor-pointer"
@@ -70,7 +72,7 @@ const NavIcons = () => {
         className="relative cursor-pointer"
         onClick={() => setIsCartOpen((prev) => !prev)}
       >
-        <Image src="/cart.png" alt="Cart" width={22} height={22} />
+        <Image src="/cart.png" alt="" width={22} height={22} />
         <div className="absolute -top-4 -right-4 w-6 h-6 bg-lama rounded-full text-white text-sm flex items-center justify-center">
           {counter}
         </div>

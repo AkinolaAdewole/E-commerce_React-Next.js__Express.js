@@ -1,23 +1,15 @@
 "use client";
 
-import { useCartStore } from "@/hooks/useCartStore";
-import { useWixClient } from "@/hooks/useWixClient";
+import { useCartStore } from "../hooks/useCartStore";
+import { useWixClient } from "../hooks/useWixClient";
 import { useState } from "react";
 
-const Add = ({
-  productId,
-  variantId,
-  stockNumber,
-}: {
-  productId: string;
-  variantId: string;
-  stockNumber: number;
-}) => {
+const Add = ({ productId, variantId, stockNumber }) => {
   const [quantity, setQuantity] = useState(1);
   const wixClient = useWixClient();
   const { addItem, isLoading } = useCartStore();
 
-  const handleQuantity = (type: "i" | "d") => {
+  const handleQuantity = (type) => {
     if (type === "d" && quantity > 1) {
       setQuantity((prev) => prev - 1);
     }

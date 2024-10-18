@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { currentCart } from "@wix/ecom";
-import { WixClient } from "@/context/wixContext";
+import { WixClient } from "../context/wixContext";
 
 export const useCartStore = create((set) => ({
   cart: [],
@@ -41,9 +41,7 @@ export const useCartStore = create((set) => ({
   },
   removeItem: async (wixClient, itemId) => {
     set((state) => ({ ...state, isLoading: true }));
-    const response = await wixClient.currentCart.removeLineItemsFromCurrentCart(
-      [itemId]
-    );
+    const response = await wixClient.currentCart.removeLineItemsFromCurrentCart([itemId]);
 
     set({
       cart: response.cart,

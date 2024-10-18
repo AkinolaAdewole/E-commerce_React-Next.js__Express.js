@@ -1,24 +1,29 @@
-import Add from "@/components/Add";
-import CustomizeProducts from "@/components/CustomizeProducts";
-import ProductImages from "@/components/ProductImages";
-import Reviews from "@/components/Reviews";
-import { wixClientServer } from "@/lib/wixClientServer";
+import Add from '../../components/Add';
+import CustomizeProducts from "../../components/CustomizeProducts";
+import ProductImages from "../../components/ProductImages";
+import Reviews from "../../components/Reviews";
+import { wixClientServer } from "../../lib/wixClientServer"; // Adjust import if needed
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-const SinglePage = async ({ params }: { params: { slug: string } }) => {
+// Use a separate function to fetch the product data
+const fetchProductData = async (slug) => {
   const wixClient = await wixClientServer();
 
   const products = await wixClient.products
     .queryProducts()
-    .eq("slug", params.slug)
+    .eq("slug", slug)
     .find();
 
-  if (!products.items[0]) {
+  return products.items[0] || null; // Return the product or null
+};
+
+const SinglePage = async ({ params }) => {
+  const product = await fetchProductData(params.slug);
+
+  if (!product) {
     return notFound();
   }
-
-  const product = products.items[0];
 
   return (
     <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 relative flex flex-col lg:flex-row gap-16">
@@ -46,19 +51,19 @@ const SinglePage = async ({ params }: { params: { slug: string } }) => {
         <div className="h-[2px] bg-gray-100" />
         {product.variants && product.productOptions ? (
           <CustomizeProducts
-            productId={product._id!}
+            productId={product._id}
             variants={product.variants}
             productOptions={product.productOptions}
           />
         ) : (
           <Add
-            productId={product._id!}
+            productId={product._id}
             variantId="00000000-0000-0000-0000-000000000000"
             stockNumber={product.stock?.quantity || 0}
           />
         )}
         <div className="h-[2px] bg-gray-100" />
-        {product.additionalInfoSections?.map((section: any) => (
+        {product.additionalInfoSections?.map((section) => (
           <div className="text-sm" key={section.title}>
             <h4 className="font-medium mb-4">{section.title}</h4>
             <p>{section.description}</p>
@@ -68,7 +73,7 @@ const SinglePage = async ({ params }: { params: { slug: string } }) => {
         {/* REVIEWS */}
         <h1 className="text-2xl">User Reviews</h1>
         <Suspense fallback="Loading...">
-          <Reviews productId={product._id!} />
+          <Reviews productId={product._id} />
         </Suspense>
       </div>
     </div>

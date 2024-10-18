@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useCartStore } from "@/hooks/useCartStore";
 import { media as wixMedia } from "@wix/sdk";
-import { useWixClient } from "@/hooks/useWixClient";
+import { useWixClient} from "../hooks/useWixClient"
 import { currentCart } from "@wix/ecom";
+import { useCartStore } from "../hooks/useCartStore";
 
 const CartModal = () => {
   const wixClient = useWixClient();
