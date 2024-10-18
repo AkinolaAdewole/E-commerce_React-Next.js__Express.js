@@ -84,7 +84,7 @@ const LoginPage = () => {
                 body: JSON.stringify({
                   email,
                   password,
-                  profile: { nickname: username, firstname, lastname, phonenumber }, // Include additional fields as needed
+                  profile: {  firstname, lastname, phonenumber }, // Include additional fields as needed
                 }),
               });
               break;
