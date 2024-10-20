@@ -26,7 +26,7 @@ const LoginPage = () => {
   const [mode, setMode] = useState(MODE.LOGIN);
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
-  const [username, setUsername] = useState("");
+  const [phonenumber, setPhonenumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailCode, setEmailCode] = useState("");
@@ -62,7 +62,7 @@ const LoginPage = () => {
       
           switch (mode) {
             case MODE.LOGIN:
-              // POST request for signing in
+              // POST request for signin
               response = await fetch("http://localhost:4200/user/signin", {
                 method: "POST",
                 headers: {
@@ -75,7 +75,7 @@ const LoginPage = () => {
               });
               break;
             case MODE.REGISTER:
-              // POST request for signing up
+              // POST request for signup
               response = await fetch("http://localhost:4200/user/signup", {
                 method: "POST",
                 headers: {
@@ -84,7 +84,7 @@ const LoginPage = () => {
                 body: JSON.stringify({
                   email,
                   password,
-                  profile: {  firstname, lastname, phonenumber }, // Include additional fields as needed
+                  firstname, lastname, phonenumber, // Include additional fields as needed
                 }),
               });
               break;

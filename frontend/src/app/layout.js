@@ -1,8 +1,11 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "../components/Navbar";
+import dynamic from "next/dynamic"; // Import dynamic
 import Footer from "../components/Footer";
-import { WixClientContextProvider } from "@/context/wixContext";
+import { WixClientContextProvider } from "../context/wixContext";
+
+// Dynamic import of Navbar to prevent SSR issues
+const Navbar = dynamic(() => import("../components/Navbar"), { ssr: false });
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +20,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <WixClientContextProvider>
           <Navbar />
-            {children}
+          {children}
           <Footer />
         </WixClientContextProvider>
       </body>

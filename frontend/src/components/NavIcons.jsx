@@ -13,12 +13,27 @@ const NavIcons = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isCartLoading, setIsCartLoading] = useState(true);
 
   const router = useRouter();
   const pathName = usePathname();
 
   const wixClient = useWixClient();
-  const isLoggedIn = wixClient.auth.loggedIn();
+  const { cart, counter, getCart } = useCartStore();
+
+  // Check login status on client-side only
+  useEffect(() => {
+    if (wixClient) {
+      setIsLoggedIn(wixClient.auth.loggedIn());
+    }
+  }, [wixClient]);
+
+  // Fetch the cart data
+  useEffect(() => {
+    setIsCartLoading(true);
+    getCart(wixClient).then(() => setIsCartLoading(false));
+  }, [wixClient, getCart]);
 
   const handleProfile = () => {
     if (!isLoggedIn) {
@@ -30,18 +45,17 @@ const NavIcons = () => {
 
   const handleLogout = async () => {
     setIsLoading(true);
-    Cookies.remove("refreshToken");
-    const { logoutUrl } = await wixClient.auth.logout(window.location.href);
-    setIsLoading(false);
-    setIsProfileOpen(false);
-    router.push(logoutUrl);
+    try {
+      Cookies.remove("refreshToken");
+      const { logoutUrl } = await wixClient.auth.logout(window.location.href);
+      router.push(logoutUrl);
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      setIsLoading(false);
+      setIsProfileOpen(false);
+    }
   };
-
-  const { cart, counter, getCart } = useCartStore();
-
-  useEffect(() => {
-    getCart(wixClient);
-  }, [wixClient, getCart]);
 
   return (
     <div className="flex items-center gap-4 xl:gap-6 relative">
