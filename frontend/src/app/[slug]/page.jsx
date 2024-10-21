@@ -4,8 +4,26 @@ import CustomizeProducts from "../../components/CustomizeProducts";
 import ProductImages from "../../components/ProductImages";
 import Reviews from "../../components/Reviews";
 import { notFound } from "next/navigation";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import axios from 'axios';
+
+const getUserId= async(e)=>{
+  try {
+    const UserData = await axios.get(`http://localhost:4200/user/dashboard/:userId`);
+    console.log(UserData.data);
+  } catch (error) {
+    
+  }
+}
+
+const getUserProfile= async(e)=>{
+  try {
+    const UserProfile = await axios.get(`http://localhost:4200/user/userprofile`)
+    console.log(UserProfile.data);
+  } catch (error) {
+    
+  }
+}
 
 
 const fetchProductData = async (id) => {

@@ -105,8 +105,8 @@ const LoginPage = () => {
         if (result.data.response) {
           const { user, token, message } = result.data;
           Cookies.set("token", token);
-          // console.log(user.lastname);
-          const userLastname = user.lastname;
+          console.log(user._id);
+          const userId = user._id;
           router.push("/${userlastname}");
         } else {
           setMessage(result.data.message || "Login failed. Please try again.");

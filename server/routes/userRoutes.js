@@ -12,8 +12,9 @@ router.get("/",(req,res)=>{
 
 router.post("/signup", signup);
 router.post("/signin", signin);
+router.get("/userprofile", getUserProfile)
 
 
-router.get("/dashboard/:userId",getDashboard)
+router.get("/:userId",getDashboard)
 
 export default router;

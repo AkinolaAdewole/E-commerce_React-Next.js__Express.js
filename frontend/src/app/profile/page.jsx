@@ -14,8 +14,9 @@ const ProfilePage = () => {
     const fetchUserProfile = async () => {
       try {
         // Fetch user profile from your custom API
-        const userRes = await axios.get("http://localhost:4200/user/getUserProfile");
-        setUser(userRes.data);
+        const UserData = await axios.get(`http://localhost:4200/user/dashboard/:userId`);
+        console.log(UserData.data);
+        // setUser(userRes.data);
 
         // Fetch user orders based on user contactId (modify this as needed)
         const orderRes = await axios.get(`http://localhost:4200/orders/${userRes.data.contactId}`);

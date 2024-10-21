@@ -55,7 +55,6 @@ const signup = async (req, res) => {
     }
     } catch (error) {
       console.error('Error in /user/dashboard route:', error);
-      // Handle database errors and send an error response with a 500 status code
       res.status(500).json({ error: 'Internal Server Error' });
     }
   };
