@@ -14,7 +14,7 @@ const ProfilePage = () => {
     const fetchUserProfile = async () => {
       try {
         // Fetch user profile from your custom API
-        const UserData = await axios.get(`http://localhost:4200/user/dashboard/:userId`);
+        const UserData = await axios.get(`http://localhost:4200/user/:userId`);
         console.log(UserData.data);
         // setUser(userRes.data);
 

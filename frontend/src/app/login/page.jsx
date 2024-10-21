@@ -99,27 +99,46 @@ const LoginPage = () => {
 
   const signin = () => {
     const details = { email, password };
-
+  
+    setIsLoading(true); // Start loading
+  
     axios.post("http://localhost:4200/user/signin", details)
       .then((result) => {
         if (result.data.response) {
           const { user, token, message } = result.data;
           Cookies.set("token", token);
           console.log(user._id);
-          const userId = user._id;
-          router.push("/${userlastname}");
+
+          const firstname = user.firstname;
+          const lastname =user.lastname;
+          const email = user.email;
+
+          // console.log("Firstname:", firstname);
+          // console.log("Lastname:", lastname);
+          // console.log("email:", email);
+
+          // router.push('/')
+          router.push(`/?firstname=${firstname}&lastname=${lastname}&email=${email}`);
+
+  
+          // router.push({
+          //   pathname: "/",
+          //   query: { firstname, lastname, email }, 
+          // });
+          
+  
         } else {
           setMessage(result.data.message || "Login failed. Please try again.");
         }
       })
       .catch((error) => {
-        // console.error("Error:", error.message || error);
         setMessage("An error occurred during login. Please try again.");
       })
       .finally(() => {
-        setIsLoading(false); 
+        setIsLoading(false);
       });
   };
+  
 
   
   const resetPassword = () => {

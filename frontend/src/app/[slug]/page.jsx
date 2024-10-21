@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const getUserId= async(e)=>{
   try {
-    const UserData = await axios.get(`http://localhost:4200/user/dashboard/:userId`);
+    const UserData = await axios.get(`http://localhost:4200/user/:userId`);
     console.log(UserData.data);
   } catch (error) {
     
