@@ -1,25 +1,28 @@
+
 import Add from '../../components/Add';
 import CustomizeProducts from "../../components/CustomizeProducts";
 import ProductImages from "../../components/ProductImages";
 import Reviews from "../../components/Reviews";
-import { wixClientServer } from "../../lib/wixClientServer"; // Adjust import if needed
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import axios from 'axios';
 
-// Use a separate function to fetch the product data
-const fetchProductData = async (slug) => {
-  const wixClient = await wixClientServer();
 
-  const products = await wixClient.products
-    .queryProducts()
-    .eq("slug", slug)
-    .find();
-
-  return products.items[0] || null; // Return the product or null
+const fetchProductData = async (id) => {
+  try {
+    const res = await axios.get(`https://fakestoreapi.com/products/${id}`);
+    console.log(res.data);
+    return res.data;
+  } catch (err) {
+    console.error("Error fetching product: ", err);
+    return null;
+  }
 };
 
+
+
 const SinglePage = async ({ params }) => {
-  const product = await fetchProductData(params.slug);
+  const product = await fetchProductData(params.slug); 
 
   if (!product) {
     return notFound();
@@ -27,53 +30,32 @@ const SinglePage = async ({ params }) => {
 
   return (
     <div className="px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 relative flex flex-col lg:flex-row gap-16">
-      {/* IMG */}
+      {/* Product Images */}
       <div className="w-full lg:w-1/2 lg:sticky top-20 h-max">
-        <ProductImages items={product.media?.items} />
+        <ProductImages items={[{ image: { url: product.image } }]} /> 
       </div>
-      {/* TEXTS */}
+
+      
       <div className="w-full lg:w-1/2 flex flex-col gap-6">
-        <h1 className="text-4xl font-medium">{product.name}</h1>
+        <h1 className="text-4xl font-medium">{product.title}</h1>
         <p className="text-gray-500">{product.description}</p>
         <div className="h-[2px] bg-gray-100" />
-        {product.price?.price === product.price?.discountedPrice ? (
-          <h2 className="font-medium text-2xl">${product.price?.price}</h2>
-        ) : (
-          <div className="flex items-center gap-4">
-            <h3 className="text-xl text-gray-500 line-through">
-              ${product.price?.price}
-            </h3>
-            <h2 className="font-medium text-2xl">
-              ${product.price?.discountedPrice}
-            </h2>
-          </div>
-        )}
+        <h2 className="font-medium text-2xl">${product.price}</h2>
         <div className="h-[2px] bg-gray-100" />
-        {product.variants && product.productOptions ? (
-          <CustomizeProducts
-            productId={product._id}
-            variants={product.variants}
-            productOptions={product.productOptions}
-          />
-        ) : (
-          <Add
-            productId={product._id}
-            variantId="00000000-0000-0000-0000-000000000000"
-            stockNumber={product.stock?.quantity || 0}
-          />
-        )}
+        
+        
+        <Add
+          productId={product.id} 
+          variantId="00000000-0000-0000-0000-000000000000"
+          stockNumber={product.rating?.count || 0} 
+        />
+        
         <div className="h-[2px] bg-gray-100" />
-        {product.additionalInfoSections?.map((section) => (
-          <div className="text-sm" key={section.title}>
-            <h4 className="font-medium mb-4">{section.title}</h4>
-            <p>{section.description}</p>
-          </div>
-        ))}
-        <div className="h-[2px] bg-gray-100" />
-        {/* REVIEWS */}
+        
+        {/* User Reviews */}
         <h1 className="text-2xl">User Reviews</h1>
         <Suspense fallback="Loading...">
-          <Reviews productId={product._id} />
+          <Reviews productId={product.id} /> 
         </Suspense>
       </div>
     </div>
